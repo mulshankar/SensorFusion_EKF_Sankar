@@ -38,7 +38,7 @@ FusionEKF::FusionEKF() {
     * Set the process and measurement noises
   */
   
-	H_laser_>> 1,0,0,0
+	H_laser_>> 1,0,0,0,
 			0,1,0,0;
 	
 	noise_ax = 9.0;
@@ -141,8 +141,8 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
    ****************************************************************************/
 
   if (measurement_pack.sensor_type_ == MeasurementPackage::RADAR) {
-    MatrixXd Hj = tools.CalculateJacobian(ekf_.x_);
-	ekf_.H_=Hj;
+    MatrixXd Hj_ = tools.CalculateJacobian(ekf_.x_);
+	ekf_.H_=Hj_;
 	ekf_.R_=R_radar_;
   } 
   else{
