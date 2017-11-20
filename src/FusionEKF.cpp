@@ -41,6 +41,9 @@ FusionEKF::FusionEKF() {
 	H_laser_>> 1,0,0,0
 			0,1,0,0;
 	
+	noise_ax = 9.0;
+	noise_ay = 9.0;
+	
 	//process covariance matrix
 	ekf_.P_ = MatrixXd(4, 4);
 	ekf_.P_ << 1, 0, 0, 0,
@@ -104,10 +107,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
 		  0, 0, 1, 0,
 		  0, 0, 0, 1;
 	
-	float noise_ax = 9;
-	float noise_ay = 9;
-
-    // done initializing, no need to predict or update
+	// done initializing, no need to predict or update
     is_initialized_ = true;
     return;
   }
@@ -141,7 +141,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
    ****************************************************************************/
 
   if (measurement_pack.sensor_type_ == MeasurementPackage::RADAR) {
-    MatrixXd Hj = Tools::CalculateJacobian(ekf_.x_);
+    MatrixXd Hj = toolsCalculateJacobian(ekf_.x_);
 	ekf_.H_=Hj;
 	ekf_.R_=R_radar_;
   } 
