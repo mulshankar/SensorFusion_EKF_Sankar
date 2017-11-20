@@ -39,7 +39,7 @@ FusionEKF::FusionEKF() {
   */
   
 	H_laser_>> 1,0,0,0
-			0,1,0,0
+			0,1,0,0;
 	
 	//process covariance matrix
 	ekf_.P_ = MatrixXd(4, 4);
