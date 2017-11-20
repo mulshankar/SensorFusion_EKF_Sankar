@@ -38,7 +38,7 @@ FusionEKF::FusionEKF() {
     * Set the process and measurement noises
   */
   
-	H_laser_>> 1,0,0,0,
+	H_laser_<< 1,0,0,0,
 			0,1,0,0;
 	
 	noise_ax = 9.0;
