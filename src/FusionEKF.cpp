@@ -99,7 +99,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
 		  0, 0, 1, 0,
 		  0, 0, 0, 1;
 	
-	previous_timestamp=measurement_pack.timestamp_;
+	previous_timestamp_=measurement_pack.timestamp_;
 	
 	ekf_.Q_ << 1, 0, 1, 0,
 		  0, 1, 0, 1,
