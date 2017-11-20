@@ -46,10 +46,10 @@ FusionEKF::FusionEKF() {
 	
 	//process covariance matrix
 	ekf_.P_ = MatrixXd(4, 4);
-	ekf_.P_ << 1, 0, 0, 0,
-			  0, 1, 0, 0,
-			  0, 0, 1000, 0,
-			  0, 0, 0, 1000;
+	ekf_.P_ << 0.1, 0, 0, 0,
+			  0, 0.1, 0, 0,
+			  0, 0, 0.2, 0,
+			  0, 0, 0, 0.2;
 	
 	// state noise matrix
 	ekf_.Q_ = MatrixXd(4, 4);
