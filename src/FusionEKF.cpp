@@ -50,8 +50,9 @@ FusionEKF::FusionEKF() {
 	
 	// state noise matrix
 	ekf_.Q_ = MatrixXd(4, 4);
-	noise_ax = 9;
-	noise_ay = 9;
+	
+	float noise_ax = 9;
+	float noise_ay = 9;
 	
 	//the initial transition matrix F_
 	ekf_.F_ = MatrixXd(4, 4);
@@ -99,7 +100,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
 		  0, 0, 1, 0,
 		  0, 0, 0, 1;
 	
-	previous_timestamp=measurement_pack.timestamp_;
+	float previous_timestamp=measurement_pack.timestamp_;
 	
 	ekf_.Q_ << 1, 0, 1, 0,
 		  0, 1, 0, 1,
@@ -141,7 +142,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
    ****************************************************************************/
 
   if (measurement_pack.sensor_type_ == MeasurementPackage::RADAR) {
-    MatrixXd Hj = CalculateJacobian(ekf_.x_);
+    MatrixXd Hj = Tools::CalculateJacobian(ekf_.x_);
 	ekf_.H_=Hj;
 	ekf_.R_=R_radar_;
   } 
