@@ -44,8 +44,17 @@ void KalmanFilter::Update(const VectorXd &z) {
 
 void KalmanFilter::UpdateEKF(const VectorXd &z) {
   	float rho=sqrt(x_(0)*x_(0)+x_(1)*x_(1));
-	float phi=atan2(x_(1),x_(0));
-	float rho_dot=(x_(0)*x_(2)+x_(1)*x_(3))/rho;
+	
+	float phi=0;
+	if (fabs(x_(0)) > 0.001) {
+		phi=atan2(x_(1),x_(0));
+	}
+	
+	float rho_dot=0;
+	if (rho > 0.001) {
+		rho_dot=(x_(0)*x_(2)+x_(1)*x_(3))/rho;
+	}
+	
 	VectorXd z_pred=VectorXd(3);
 	z_pred << rho,phi,rho_dot;
 	
