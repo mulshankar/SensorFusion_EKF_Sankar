@@ -50,10 +50,7 @@ FusionEKF::FusionEKF() {
 	
 	// state noise matrix
 	ekf_.Q_ = MatrixXd(4, 4);
-	
-	float noise_ax = 9;
-	float noise_ay = 9;
-	
+
 	//the initial transition matrix F_
 	ekf_.F_ = MatrixXd(4, 4);
 
@@ -106,7 +103,9 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
 		  0, 1, 0, 1,
 		  0, 0, 1, 0,
 		  0, 0, 0, 1;
-
+	
+	float noise_ax = 9;
+	float noise_ay = 9;
 
     // done initializing, no need to predict or update
     is_initialized_ = true;
@@ -147,10 +146,8 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
 	ekf_.R_=R_radar_;
   } 
   else{
-  
   ekf_.H_=H_laser_;
-  ekf_.R_=R_laser_;
-    
+  ekf_.R_=R_laser_;    
   }
 
   // print the output
