@@ -80,8 +80,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
     // first measurement
     cout << "EKF: " << endl;
     ekf_.x_ = VectorXd(4);
-    ekf_.x_ << 1, 1, 1, 1;
-
+    
     if (measurement_pack.sensor_type_ == MeasurementPackage::RADAR) {
       ekf_.x_(0)=measurement_pack.raw_measurements_[0]*cos(measurement_pack.raw_measurements_[1]);
 	  ekf_.x_(1)=measurement_pack.raw_measurements_[0]*sin(measurement_pack.raw_measurements_[1]);
