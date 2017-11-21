@@ -24,17 +24,17 @@ Remaining files are used "as-is" to interface with simulator and doing backgroun
 
 Four primary states were chosen as described below.
 
-States=		[Position_x,
+* States=		[Position_x,
 		Position_y,
 		Velocity_x,
 		Velocity_y]
 
-Two sets of measurement data is available as shown below:
+* Two sets of measurement data is available:
 
-LIDAR measurements = [ position_x, position_y];
+LIDAR measurements = [ position_x, position_y]
 RADAR measurements = [rho, phi, rho_dot];
 		
-The following steps were completed in order to implement the EKF algorithm:
+The following steps were completed to implement the EKF algorithm:
 
 * Initialize the state vector, process and measurement noise matrices
 * Calculate time step 'dt' between two measurements
@@ -50,7 +50,7 @@ void KalmanFilter::Predict() {
 * Call measurement update function based on LIDAR or RADAR data. The key difference is in the measurement model between the two sensors. As shown above, LIDAR provides a 3-D point cloud that can be parsed into a (x,y) position. In this case the measurement model,  
 
 ```sh
-	Z=H*x;	
+	Z=H*x;
 	H_laser_<< 1,0,0,0,
 			0,1,0,0;
 ```
@@ -83,17 +83,33 @@ But in the case of radar, measurement model is non-linear since we need to conve
 	y(1)=y(1)-2*PI;
 	}	
 ```
-As shown above, it becomes necessary to check for division by zero and also ensure that all angles are normalized between +pi and -pi with 0 being center of viewing angle. It is illustrated in the figure below. 
+As shown above, it becomes necessary to check for division by zero and also ensure that all angles are normalized between +pi and -pi with 0 being center of viewing angle. It is illustrated in the figure below. The angle marked by the star can be represented either as + pi/2 or -3/2 * pi. 
 
 ![alt text][image1]
 
-**Building the classifier**
+* The non-linear measurement model of the radar necessitates calculation of the Jacobian to be used in the kalman filter equation. The jacobian calculation is embedded in the tools.cpp function
 
-A simple linear Support Vector Machine (SVM) classifier was chosen for the detection problem. Various combinations of color, spatial and HOG features were iterated upon to quantify the classification accuracy. 
+* Once the Jacobian is calculated, the measurement update equations remain identical between the LIDAR and RADAR data
 
-- In terms of spatial feature, a 32x32 image was sufficient to capture the key features of a car
-- Various color spaces were explored that include HSV, HLS, LUV, YUV and YCrCb. In terms of classifier accuracy, HLS and YCrCb performed the best. It was interesting to note that LUV and YUV features caused some NaN values while extracting HOG features on some images. The final color space chosen for this project was YCrCb
-- HOG features were extracted from all 3 channels. It made the feature vector slightly longer but helped a lot in terms of classification accuracy. A Design of Experiments (DOE) was performed on the HOG parameters. The first parameter that was studied was the HOG orientations. Image below shows the effect of number of orientations for a car image. As evident from the image below, increasing orientations beyond 9 did not add any value. When the number of orientations was set at 9, the a clear pattern was noticed for car image.  
+```sh
+	MatrixXd Ht = H_.transpose();
+	MatrixXd S = H_ * P_ * Ht + R_;
+	MatrixXd Si = S.inverse();
+	MatrixXd PHt = P_ * Ht;
+	MatrixXd K = PHt * Si;
+
+	//new estimate
+	x_ = x_ + (K * y);
+	long x_size = x_.size();
+	MatrixXd I = MatrixXd::Identity(x_size, x_size);
+	P_ = (I - K * H_) * P_;
+```
+
+**Testing**
+
+As the first step, only LIDAR measurement were used to predict the states. The results of simulator testing are shown in image below:
+
+
 
 ![alt text][image2]
 
