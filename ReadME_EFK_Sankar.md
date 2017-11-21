@@ -1,4 +1,4 @@
-# Vehicle Detection Project
+# Extended Kalman Filter for position and velocity tracking of a self-driving car
 ---
 
 The goals of this project are as follows:
@@ -7,34 +7,83 @@ The goals of this project are as follows:
 * The position estimates must be within 0.11 m accuracy and velocity estimates must be within 0.52 m/s (accuracy is quantified via Root Mean Square Estimates)
 
 [//]: # (Image References)
-[image2]: ./examples/OrientationDOE.png
+[image1]: ./figs/RadarData.jpg
 [image3]: ./examples/PixPerCellDOE.png
 [image4]: ./examples/CellPerBlockDOE.png
-[image1]: ./examples/HOGdemo.PNG
-[image5]: ./examples/FalsePositives.PNG
-[image6]: ./examples/HeatSample.PNG
-[image7]: ./examples/heat.PNG
-[image8]: ./examples/HeatMapThreshold.PNG
 
 **Description of files**
 
 * FusionEFK.cpp is the primary file that initializes the states, the covariance matrix as well as the noise matrices
-* kalman_filter.cpp contains the state transition and the measurement model
+* kalman_filter.cpp contains the state transition and measurement models for state update
 * tools. cpp contains the jacobian and RMSE calculation for easy access
 
-Remaining files are used "as-is" provided by Udacity to interface with simulator and doing background tasks. 
+Remaining files are used "as-is" to interface with simulator and doing background tasks. 
 
 **Algorithm**
 ---
 
-The first step was to implement the EFK algorithm was to intialize the states, covariance and transition matrices. Four primary states were chosen:
+Four primary states were chosen as described below.
 
 States=		[Position_x,
 		Position_y,
 		Velocity_x,
 		Velocity_y]
+
+Two sets of measurement data is available as shown below:
+
+LIDAR measurements = [ position_x, position_y];
+RADAR measurements = [rho, phi, rho_dot];
+		
+The following steps were completed in order to implement the EKF algorithm:
+
+* Initialize the state vector, process and measurement noise matrices
+* Calculate time step 'dt' between two measurements
+* Use the state transition model to make a prediction on states
+
+```sh
+void KalmanFilter::Predict() {
+	x_ = F_ * x_;
+	MatrixXd Ft = F_.transpose();
+	P_ = F_ * P_ * Ft + Q_;
+}
+```
+* Call measurement update function based on LIDAR or RADAR data. The key difference is in the measurement model between the two sensors. As shown above, LIDAR provides a 3-D point cloud that can be parsed into a (x,y) position. In this case the measurement model,  
+
+```sh
+	Z=H*x;	
+	H_laser_<< 1,0,0,0,
+			0,1,0,0;
+```
+
+But in the case of radar, measurement model is non-linear since we need to convert the data from polar to cartesian coordinates
+
+```sh
+  	float rho=sqrt(x_(0)*x_(0)+x_(1)*x_(1));
 	
+	float phi=0;// check for division by zero
+	if (fabs(x_(0)) > 0.001) {
+		phi=atan2(x_(1),x_(0));
+	}
 	
+	float rho_dot=0.001; // check for division by zero
+	if (rho > 0.001) {
+		rho_dot=(x_(0)*x_(2)+x_(1)*x_(3))/rho;
+	}
+	
+	VectorXd z_pred=VectorXd(3);
+	z_pred << rho,phi,rho_dot;
+	
+	VectorXd y = z - z_pred;
+	
+	// normalize to keep phi between pi and -pi
+	if (y(1)<-PI){
+	y(1)=y(1)+2*PI;
+	}
+	else if (y(1)>PI){
+	y(1)=y(1)-2*PI;
+	}	
+```
+As shown above, it becomes necessary to check for division by zero and also ensure that all angles are normalized between +pi and -pi with 0 being center of viewing angle. It is illustrated in the figure below. 
 
 ![alt text][image1]
 
