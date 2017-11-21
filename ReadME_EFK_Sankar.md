@@ -109,11 +109,11 @@ As shown above, it becomes necessary to check for division by zero and also ensu
 
 **Testing**
 
-As the first step, only LIDAR measurement were used to predict the states. The results of simulator testing are shown in image below. While the performance is OK, the RMSE values are above the target requirement. 
+As the first step, only LIDAR measurement was used to predict the states. The results of simulator testing is shown in image below. While the performance is OK, the RMSE values are above the target requirement. 
 
 ![alt text][image2]
 
-The next step was to test only with RADAR data to quantify performance. Simulator testing results are shown below. The RADAR measurement is inherently noisy compared to LIDAR. The state estimates are worse than the pure LIDAR case.
+The next step was to test only with RADAR data to quantify performance. Simulator testing results is shown below. The RADAR measurement is inherently noisy compared to LIDAR. The state estimates are worse than the pure LIDAR case.
 
 ![alt text][image3]
 
