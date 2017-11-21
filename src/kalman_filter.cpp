@@ -60,10 +60,10 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
 	
 	VectorXd y = z - z_pred;
 	
-	if y(1)<-PI{
+	if (y(1)<-PI){
 	y(1)=y(1)+2*PI;
 	}
-	else if y(1)>PI{
+	else if (y(1)>PI){
 	y(1)=y(1)-2*PI;
 	}
 	
