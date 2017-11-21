@@ -1,4 +1,4 @@
-## Vehicle Detection Project
+# Vehicle Detection Project
 ---
 
 The goals of this project are as follows:
@@ -29,7 +29,7 @@ Remaining files are used "as-is" provided by Udacity to interface with simulator
 
 The first step was to implement the EFK algorithm was to intialize the states, covariance and transition matrices. Four primary states were chosen:
 
-States=[Position_x,
+States=		[Position_x,
 		Position_y,
 		Velocity_x,
 		Velocity_y]
